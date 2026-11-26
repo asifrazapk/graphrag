@@ -175,18 +175,6 @@ Numbers from runs on the author's machine. They illustrate the effects, they are
 
 Notes: the precision and recall of 1.0 are because a template-based extractor stands in for the LLM and matches the generated text exactly. A real LLM will score lower. That gap is the number to track. The latency figures are from a tiny graph, so they say little about millions of nodes.
 
-## Interview Q&A
-
-1. **How do you scale to millions of nodes?** Decouple stages with a queue. Use parallel extraction with a rate limiter. Write in batches with constraints. Bulk import the first load.
-2. **How do you find the right nodes for a question?** Entity linking with a fulltext or vector index, then a bounded 1 to 3 hop expansion, ranking and trimming to the context window.
-3. **Graph RAG vs vector RAG?** Graph wins on multi-hop questions, relationships and aggregations. Vector wins on fuzzy semantic lookup over text. Many systems combine both.
-4. **Is Neo4j fast?** Traversals follow direct pointers, so cost does not grow with total data size. Time goes to the network, hub nodes, missing indexes and cold caches. Check with `PROFILE`.
-5. **How do you handle hub nodes?** Cap degree per hop, filter relationship types, rank neighbours, precompute community summaries.
-6. **How do you deal with duplicate entities?** Normalize, block, fuzzy or embedding match, verify ambiguous cases. Keep merges reversible.
-7. **How do you make extraction reliable and cheap?** Constrain output to validated JSON, retry with backoff, use a cheap model or a batch API, checkpoint with content hashes.
-8. **How do you keep the graph current?** Incremental `MERGE` keyed on document hashes, with source and timestamp on edges.
-9. **How do you evaluate quality?** A labelled question set and ground-truth triples. Measure retrieval recall and answer accuracy on every prompt or model change.
-10. **Security and cost risks?** Parameterized Cypher to prevent injection, treat ingested text as untrusted data (prompt injection), least-privilege database user, cost-per-document tracking, caching.
 
 ## Troubleshooting
 
